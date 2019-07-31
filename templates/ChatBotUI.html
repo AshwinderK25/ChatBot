@@ -84,7 +84,7 @@ box-shadow: 0 0 10px #C0C0C0;
 
 /* Add styles to the form container */
 .form-container {
-  width: 400px;
+  width: 600px;
   padding: 10px;
   background-color: white;
 }
@@ -223,11 +223,15 @@ var form = document.getElementById("messageform");
         if(message.length!=0){
 
         var divdata = divchat.innerHTML;
+        var udate = new Date();
+        var userdatestring = udate.toUTCString();
         var format = "<div style='float:right;clear:both;margin:10px;padding:10px;width:50%;color:black;height:auto;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
-        divchat.innerHTML+=format+message+'</div>';
+        divchat.innerHTML+=format+message+'</div>'+'<div style="float:right;clear:both;text-align:right;padding-right:12px;width:50%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+userdatestring+'</div>';
 
+        var rdate = new Date();
+        var botdatestring = rdate.toUTCString();
         var format1 = "<div style='background:#e0301e;color:white;float:left;clear:both;margin:10px;padding:10px;width:50%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
-        divchat.innerHTML+=format1+msg.reply+'</div>';
+        divchat.innerHTML+=format1+msg.reply+'</div>'+'<div style="float:left;clear:both;text-align:left;padding-left:12px;width:50%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+botdatestring+'</div>';
 
         var objDiv = document.getElementById("chatspace");
         objDiv.scrollTop = objDiv.scrollHeight;
