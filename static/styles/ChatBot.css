@@ -1,0 +1,101 @@
+body{
+  background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(242,235,243,1) 0%, rgba(234,241,249,1) 90.1% );
+}
+
+.chatcontainer{
+  width:35%;
+  float:right;
+  margin-top:0px;
+  margin-right: 40px;
+}
+.boticon{
+
+  float:right
+}
+.chatheader{
+  height:50px;
+  background:#e0301e;
+  border-radius:10px 10px 0px 0px;
+  display: table;
+  width:100%
+}
+
+.text-area{
+  width:100%;
+  overflow: hidden;
+  padding-left:10px;
+  border:none;
+  color:	#C0C0C0
+}
+.text-area:focus {
+    outline: none !important;
+    border:1px solid;
+    box-shadow: 0 0 10px #C0C0C0;
+}
+.back{
+  float:left;
+  width:40%
+}
+.back i{
+  color:white;
+  padding:20px 80px 20px 10px
+}
+.username{
+  display: table-cell;
+  vertical-align: middle;
+  color:white;
+  font-size:14px;
+  width:60%;
+}
+.settings{
+  float:left
+}
+
+.settings i{
+  color:white;
+  padding:10px 20px 20px 0px
+}
+
+.chatwindow{
+  overflow:auto;
+  height:380px;
+  background:#F5F5F5;
+  color: blue;
+}
+.message{
+  height:50px;
+  width:80%;
+  float: left;
+  background:white;
+
+}
+.sendbutton{
+  height:50px;
+  background:#e0301e;
+  width:20%;
+  float:right;
+  display:inline-block;
+  border-radius:0 0 0px 0
+
+}
+
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 0px;
+  right: 60px;
+  width: 100px;
+}
+/* Hover Effects on Card */
+
+@media (min-width: 992px) {
+  .chat{
+
+  }
+
+}

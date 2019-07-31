@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/ChatBot.css') }}"/>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+<style>
+/* width */
+.chatwindow::-webkit-scrollbar {
+width: 8px !important;
+}
+
+/* Track */
+.chatwindow::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+
+}
+
+/* Handle */
+.chatwindow::-webkit-scrollbar-thumb {
+  background: grey;
+
+}
+
+/* Handle on hover */
+.chatwindow::-webkit-scrollbar-thumb:hover {
+  background-color: #e0301e;
+}
+
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+/* Button used to open the chat form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  bottom: 23px;
+  right: 28px;
+  width: 280px;
+}
+
+.heighttext{
+    display:inline-block;
+    line-height:46px;
+    width: 100%;
+    border:1px solid #C0C0C0;
+    color: black;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+    padding-left: 20px;
+    color: #808080;
+
+}
+.heighttext:focus{
+outline: none !important;
+border:1px solid #C0C0C0;
+box-shadow: 0 0 10px #C0C0C0;
+}
+/* The popup chat - hidden by default */
+.chat-popup {
+  display: none;
+  margin-top:50px;
+  bottom: 200;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  position:fixed;
+
+
+}
+
+/* Add styles to the form container */
+.form-container {
+  width: 400px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width textarea */
+.form-container textarea {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+  min-height: 200px;
+}
+
+/* When the textarea gets focus, do something */
+.form-container textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/send button */
+.form-container .btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:100px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<button class="open-button" id="openchat" onclick="openForm()">Click here to Chat</button>
+
+<div class="chat-popup" id="myForm">
+  <form action="http://127.0.0.1:5000" class="form-container" id="messageform" method="POST">
+
+    <div class="chatheader">
+      <div class="back"><a class="send" onclick="closeForm()" href="#"><i class="fa fa-angle-left"></i></a></div>
+      <div class="username">PwC - Privacy Chat Bot</div>
+      <div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>
+    </div>
+    <div class="chatwindow" id="chatspace">
+      {{botreply}}
+    </div>
+    <div style="height:50px;background:red">
+      <div class="message" style="height:100%;width:80%"><input name="messageuser" class="heighttext" id="usermessage" value="{{request.form.messageuser}}" placeholder="Type your message..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Type your message..'"></input></div>
+      <div class="sendbutton"><input class="send" type="submit" value="Send" style="height:100%;width:100%"/>
+
+      <!--<a class="send" id="sendchat" href="#">
+        <i class="fa fa-paper-plane" aria-hidden="true" style="font-size:28px;color:white;padding:10px 10px 20px 20px"></i>
+      </a>-->
+    </div>
+    </div>
+  </form>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script>
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+  document.getElementById("openchat").style.display = "none";
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+  document.getElementById("openchat").style.display = "block";
+  var divchat = document.getElementById("chatspace");
+  divchat.innerHTML="";
+}
+
+
+
+</script>
+<!--<script>
+/*function sendmessage() {
+var message = document.getElementById("usermessage").value;
+var divchat = document.getElementById("chatspace");
+if(message.length!=0){
+
+var divdata = divchat.innerHTML;
+var format = "<div style='float:right;clear:both;margin:10px;padding:10px;width:50%;color:black;height:auto;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+divchat.innerHTML+=format+message+'</div>';
+
+var format1 = "<div style='background:#e0301e;color:white;float:left;clear:both;margin:10px;padding:10px;width:50%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+divchat.innerHTML+=format1+"Hey there!"+'</div>';
+
+var objDiv = document.getElementById("chatspace");
+objDiv.scrollTop = objDiv.scrollHeight;
+
+document.getElementById("usermessage").value='';
+
+}
+
+}*/
+</script>-->
+<script>
+var socket = io.connect('http://' + document.domain + ':' + location.port);
+var form = document.getElementById("messageform");
+      socket.on( 'connect', function() {
+        socket.emit( 'my event', {
+          data: 'User Connected'
+        } )
+        var form = $( 'form' ).on( 'submit', function( e ) {
+         e.preventDefault()
+         var user_input = document.getElementById("usermessage").value;
+          console.log(user_input)
+          socket.emit( 'my event', {
+
+            message : user_input
+
+
+          } )
+
+        } )
+      } )
+      socket.on( 'my response', function( msg ) {
+        console.log( msg )
+
+        var message = document.getElementById("usermessage").value;
+        var divchat = document.getElementById("chatspace");
+        if(message.length!=0){
+
+        var divdata = divchat.innerHTML;
+        var format = "<div style='float:right;clear:both;margin:10px;padding:10px;width:50%;color:black;height:auto;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+        divchat.innerHTML+=format+message+'</div>';
+
+        var format1 = "<div style='background:#e0301e;color:white;float:left;clear:both;margin:10px;padding:10px;width:50%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+        divchat.innerHTML+=format1+msg.reply+'</div>';
+
+        var objDiv = document.getElementById("chatspace");
+        objDiv.scrollTop = objDiv.scrollHeight;
+
+        document.getElementById("usermessage").value='';
+
+        }
+      })
+
+
+</script>
+</body>
+</html>
