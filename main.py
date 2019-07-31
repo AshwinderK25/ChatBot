@@ -26,9 +26,9 @@ def handle_my_custom_event(json, methods=['GET', 'POST']):
     print("length of string :"+str(len(fmes))+":"+fmes)
     hello = 'reply'
     choice = ''
-    usergreetings = ['hey', 'hi', 'hey there', 'hi there', 'hello', 'hola', 'yoo']
+    usergreetings = ['hey', 'hi', 'hey there', 'hi there', 'hello', 'hola']
     botgreetings = ['hey there!', 'hi!', 'hi there!', 'hey!']
-    if fmes in usergreetings:
+    if fmes.lower() in usergreetings:
         choice = random.choice(botgreetings)
     else:
         choice = "Sorry..."
