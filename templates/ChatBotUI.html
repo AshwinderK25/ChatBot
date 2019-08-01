@@ -137,7 +137,7 @@ box-shadow: 0 0 10px #C0C0C0;
   <form action="http://127.0.0.1:5000" class="form-container" id="messageform" method="POST">
 
     <div class="chatheader">
-      <div class="back"><a class="send" onclick="closeForm()" href="#"><i class="fa fa-angle-left"></i></a></div>
+      <div class="back"><a class="send" onclick="minimizeForm()" href="#"><i class="fa fa-angle-down"></i></a></div>
       <div class="username">PwC - Privacy Chat Bot</div>
       <div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>
     </div>
@@ -168,9 +168,15 @@ function closeForm() {
   document.getElementById("openchat").style.display = "block";
   var divchat = document.getElementById("chatspace");
   divchat.innerHTML="";
+  document.getElementById("usermessage").value = "";
 }
 
+function minimizeForm() {
+  document.getElementById("myForm").style.display = "none";
+  document.getElementById("openchat").style.display = "block";
+  var divchat = document.getElementById("chatspace");
 
+}
 
 </script>
 <!--<script>
