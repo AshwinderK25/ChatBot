@@ -9,8 +9,12 @@ socketio = SocketIO(app)
 
 @app.route('/')
 def sessions():
-    return render_template('ChatBotUI.html')
+    # return render_template('ChatBotUI.html')
+    return render_template('welcome.html')
 
+@app.route('/chatbot', methods=['GET','POST'])
+def start_chat():
+    return render_template('ChatBotUI.html')
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')

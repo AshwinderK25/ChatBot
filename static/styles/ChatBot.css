@@ -2,6 +2,32 @@ body{
   background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(242,235,243,1) 0%, rgba(234,241,249,1) 90.1% );
 }
 
+#header {
+  color: #e0301e;
+  text-align: center;
+  margin-top: 250px;
+}
+
+#introduction {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#input_name_form {
+  text-align: center;
+  margin-top: 15px;
+
+}
+
+#input_name {
+  width: 350px;
+  height: 50px;
+}
+
+#input_name_btn {
+  height: 50px;
+}
+
 .chatcontainer{
   width:60%;
   float:right;
