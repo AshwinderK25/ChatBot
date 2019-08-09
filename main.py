@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO
 import random
 
@@ -6,11 +6,14 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 socketio = SocketIO(app)
 
-
-@app.route('/')
+@app.route('/', methods=["POST", "GET"])
 def sessions():
     # return render_template('ChatBotUI.html')
     return render_template('welcome.html')
+
+@app.route('/exit')
+def exit():
+    return redirect(url_for("sessions"))
 
 @app.route('/chatbot', methods=['GET','POST'])
 def start_chat():
@@ -18,7 +21,6 @@ def start_chat():
 
 def messageReceived(methods=['GET', 'POST']):
     print('message was received!!!')
-
 
 @socketio.on('my event')
 def handle_my_custom_event(json, methods=['GET', 'POST']):

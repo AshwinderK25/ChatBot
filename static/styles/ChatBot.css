@@ -4,19 +4,27 @@ body{
 
 #header {
   color: #e0301e;
-  text-align: center;
-  margin-top: 250px;
 }
 
 #introduction {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 250px;
 }
 
 #input_name_form {
   text-align: center;
   margin-top: 15px;
 
+}
+
+#exit {
+  float: right;
+}
+
+#exit_btn {
+  background-color: Transparent;
+  outline: none;
+  border: none;
 }
 
 #input_name {
