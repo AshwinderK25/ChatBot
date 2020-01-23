@@ -10,11 +10,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-
 <style>
 /* width */
 .chatwindow::-webkit-scrollbar {
 width: 8px !important;
+
 }
 
 /* Track */
@@ -81,6 +81,17 @@ box-shadow: 0 0 10px #C0C0C0;
 
 
 }
+.username-popup {
+
+  margin-top:50px;
+  bottom: 200;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+  position:fixed;
+
+
+}
 
 /* Add styles to the form container */
 .form-container {
@@ -127,16 +138,51 @@ box-shadow: 0 0 10px #C0C0C0;
 .form-container .btn:hover, .open-button:hover {
   opacity: 1;
 }
+
+[data-letters]:before {
+  content:attr(data-letters);
+  display:inline-block;
+  font-size:1.0em;
+  width:2.4em;
+  height:40px;
+  line-height:2.5em;
+  text-align:center;
+  border-radius:50%;
+  background:#D3D3D3;
+  vertical-align:middle;
+  margin-right:1em;
+  color:#e0301e;
+  font-weight:bold;
+  }
 </style>
 </head>
 <body>
 
-<button class="open-button" id="openchat" onclick="openForm()">Click here to Chat</button>
+
+  <!--<button class="open-button" id="openchat" onclick="openForm()">Click here to Chat</button>-->
+
+
+
+<div class="username-popup" id="myUserForm" style="position:fixed;bottom:20px;">
+<div class="form-container" id="userform" method="POST">
+
+    <div class="chatheader">
+      <div class="username" style="text-align:left">Welcome to PwC's Privacy ChatBot. To begin, please enter your name below.</div>
+    </div>
+
+    <div style="height:50px;background:red" id="usernamediv">
+      <div class="message" style="height:100%;width:70%"><input name="nameuser" style="height:50px;" class="heighttext" id="nameuser" placeholder="Enter your name.." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter your name..'"></input></div>
+      <div class="sendbutton" style="width:30%;height:100%;"><button style="width:100%;height:100%;" id="openchat" onclick="openForm()">Click here to Chat</button>
+    </div>
+    </div>
+
+</div>
+</div>
 
 <div class="chat-popup" id="myForm">
   <form action="http://127.0.0.1:5000" class="form-container" id="messageform" method="POST">
 
-    <div class="chatheader">
+    <div class="chatheader" id="chatbotheader">
       <div class="back"><a class="send" onclick="minimizeForm()" href="#"><i class="fa fa-angle-down"></i></a></div>
       <div class="username">PwC - Privacy Chat Bot</div>
       <div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>
@@ -144,13 +190,9 @@ box-shadow: 0 0 10px #C0C0C0;
     <div class="chatwindow" id="chatspace">
       {{botreply}}
     </div>
-    <div style="height:50px;background:red">
-      <div class="message" style="height:100%;width:80%"><input name="messageuser" class="heighttext" id="usermessage" value="{{request.form.messageuser}}" placeholder="Type your message..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Type your message..'"></input></div>
+    <div style="height:50px;background:red" id="messageandsend">
+      <div class="message" style="height:100%;width:80%"><input style="height:50px;" name="messageuser" class="heighttext" id="usermessage" value="{{request.form.messageuser}}" placeholder="Type your message..." onfocus="this.placeholder = ''" onblur="this.placeholder = 'Type your message..'"></input></div>
       <div class="sendbutton"><input class="send" type="submit" value="Send" style="height:100%;width:100%"/>
-
-      <!--<a class="send" id="sendchat" href="#">
-        <i class="fa fa-paper-plane" aria-hidden="true" style="font-size:28px;color:white;padding:10px 10px 20px 20px"></i>
-      </a>-->
     </div>
     </div>
   </form>
@@ -158,23 +200,72 @@ box-shadow: 0 0 10px #C0C0C0;
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script>
+
+
+
 function openForm() {
+  var message = document.getElementById("nameuser").value;
+  var divchat = document.getElementById("chatspace");
+  var divdata = divchat.innerHTML;
+  var udate = new Date();
+  var userdatestring = udate.toUTCString();
+  var welcomemessage = 'Hello '+message+'. How can I help you today?'
+  if(message!=''){
+
+  var format1 = '<div style="float:left;width:50%;margin-right:20px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:10px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+  divchat.innerHTML+=format1+welcomemessage+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+userdatestring+'</div></div>';
   document.getElementById("myForm").style.display = "block";
-  document.getElementById("openchat").style.display = "none";
+  document.getElementById("myForm").style.marginTop = "50px";
+  document.getElementById("myUserForm").style.display = "none";
+  document.getElementById("chatspace").style.display = "block";
+  var header = document.getElementById("chatbotheader");
+  header.innerHTML = '<div class="back"><a class="send" onclick="minimizeForm()" href="#"><i class="fa fa-angle-down"></i></a></div><div class="username">PwC - Privacy Chat Bot</div><div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>'
+
+  document.getElementById("myUserForm").style.display = "none";
+
+ }
+  else {
+    var error = '<div id="error"><div style="text-align:left;margin:left:20px;padding:10px;color:red">Error : Please enter your name to start the chat!!!</div></div>'
+    var userdiv = document.getElementById('myUserForm');
+    userdiv.innerHTML = error+userdiv.innerHTML;
+  }
+
 }
 
 function closeForm() {
-  document.getElementById("myForm").style.display = "none";
-  document.getElementById("openchat").style.display = "block";
+  document.getElementById("myUserForm").style.display = "block";
+
+  if(document.getElementById("error")!=null){
+  document.getElementById("error").style.display = "none";
+}
   var divchat = document.getElementById("chatspace");
   divchat.innerHTML="";
   document.getElementById("usermessage").value = "";
+  document.getElementById("nameuser").value = "";
+ document.getElementById("myForm").style.display = "none";
 }
 
 function minimizeForm() {
-  document.getElementById("myForm").style.display = "none";
-  document.getElementById("openchat").style.display = "block";
-  var divchat = document.getElementById("chatspace");
+  //document.getElementById("myForm").style.display = "none";
+  document.getElementById("myUserForm").style.display = "none";
+  document.getElementById("chatspace").style.display = "none";
+  var header = document.getElementById("chatbotheader");
+ document.getElementById("myForm").style.marginTop = "420px";
+  header.innerHTML = '<div class="back" id="maximize"><a class="send" onclick="maximizeForm()" href="#"><i class="fa fa-angle-up"></i></a></div><div class="username">PwC - Privacy Chat Bot</div><div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>'
+
+
+}
+
+
+function maximizeForm() {
+  //document.getElementById("myForm").style.display = "none";
+  document.getElementById("myForm").style.marginTop = "50px";
+  document.getElementById("myUserForm").style.display = "none";
+  document.getElementById("chatspace").style.display = "block";
+  var header = document.getElementById("chatbotheader");
+  header.innerHTML = '<div class="back"><a class="send" onclick="minimizeForm()" href="#"><i class="fa fa-angle-down"></i></a></div><div class="username">PwC - Privacy Chat Bot</div><div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>'
+  var objDiv = document.getElementById("chatspace");
+  objDiv.scrollTop = objDiv.scrollHeight;
 
 }
 
@@ -204,12 +295,21 @@ document.getElementById("usermessage").value='';
 <script>
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 var form = document.getElementById("messageform");
+var usernameform = document.getElementById("userform");
       socket.on( 'connect', function() {
         socket.emit( 'my event', {
           data: 'User Connected'
         } )
         var form = $( 'form' ).on( 'submit', function( e ) {
          e.preventDefault()
+         document.getElementById("myForm").style.marginTop = "50px";
+         document.getElementById("myUserForm").style.display = "none";
+         document.getElementById("chatspace").style.display = "block";
+         var header = document.getElementById("chatbotheader");
+         header.innerHTML = '<div class="back"><a class="send" onclick="minimizeForm()" href="#"><i class="fa fa-angle-down"></i></a></div><div class="username">PwC - Privacy Chat Bot</div><div class="settings"><a class="send" href="#" onclick="closeForm()"><i class="fa fa-times"></i></a></div>'
+         var objDiv = document.getElementById("chatspace");
+         objDiv.scrollTop = objDiv.scrollHeight;
+
          var user_input = document.getElementById("usermessage").value;
           console.log(user_input)
           socket.emit( 'my event', {
@@ -220,24 +320,43 @@ var form = document.getElementById("messageform");
           } )
 
         } )
+
+
       } )
       socket.on( 'my response', function( msg ) {
         console.log( msg )
 
         var message = document.getElementById("usermessage").value;
+        var username = document.getElementById("nameuser").value;
+        var firstletter = username.charAt(0).toUpperCase();
         var divchat = document.getElementById("chatspace");
         if(message.length!=0){
 
         var divdata = divchat.innerHTML;
         var udate = new Date();
         var userdatestring = udate.toUTCString();
-        var format = '<div style="float:right;width:50%;margin-right:20px;">'+"<div style='float:left;clear:both;margin-top:20px;margin-left:10px;padding:10px;width:80%;color:black;height:auto;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
-        divchat.innerHTML+=format+message+'</div><div style="float:right;margin-top:15px;margin-left:10px;padding-right:10px;padding-top:10px;width:10%;color:black"><i class="fa fa-user" style="font-size:40px;color:#D3D3D3" aria-hidden="true"></i></div></div>'+'<div style="float:right;width:50%;margin-right:20px;"><div style="float:left;clear:both;text-align:right;padding-right:0px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+userdatestring+'</div></div>';
+        /*var format = '<div style="float:right;width:50%;margin-right:20px;margin-top:20px">'+"<div style='float:left;clear:both;margin-top:20px;margin-left:10px;padding:10px;width:80%;color:black;height:auto;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+        divchat.innerHTML+=format+message+'</div><div style="float:right;margin-top:15px;margin-left:10px;padding-right:10px;padding-top:10px;width:10%;color:black"><i class="fa fa-user" style="font-size:40px;color:#D3D3D3" aria-hidden="true"></i></div></div>'+'<div style="float:right;width:50%;margin-right:20px;"><div style="float:left;clear:both;text-align:right;padding-right:0px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+userdatestring+'</div></div>'; */
+
+        var format = '<div style="float:right;width:52%;margin-right:15px;margin-top:20px;height:auto;margin-bottom:0px;padding:0px;">'+"<div style='float:left;clear:both;margin-top:20px;margin-left:10px;padding:15px;width:80%;color:black;height:100%;border-radius:10px;background:#D3D3D3;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+        divchat.innerHTML+=format+message+'</div><div style="float:right;margin-top:20px;margin-right:10px;padding-right:10px;width:10%;color:black"><p data-letters="'+firstletter+'"></p></div></div>'+'<div style="float:right;width:50%;margin-right:15px;padding:0px"><div style="margin-top:0px;float:left;clear:both;text-align:right;padding-right:0px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+userdatestring+'</div></div>';
+
 
         var rdate = new Date();
         var botdatestring = rdate.toUTCString();
-        var format1 = '<div style="float:left;width:50%;margin-right:20px;">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:10px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
-        divchat.innerHTML+=format1+msg.reply+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+botdatestring+'</div></div>';
+        var botreply = msg.reply;
+        var finalbotreply = '';
+        var links = '';
+        if(botreply=="I am sorry! I don't understand you"){
+          finalbotreply="<div>Here are some of the topics I can help you with.</div>"
+          links = '<div><ul><li><div style="color:white;text-decoration:underline;"><a style="color:white" href="#" id="privacypolicies" onclick="showlink()">Accessing Global Privacy Policies</a></div></li><li><div style="color:white;text-decoration:underline;"><a class="suggestlinks" id="gdpr" style="color:white" href="#" onclick="gdpr()">GDPR</a></div></li><li><div style="color:white;text-decoration:underline;"><a class="suggestlinks" id="ccpa" style="color:white" href="#" onclick="ccpa()">CCPA</a></div></li><li><div style="color:white;text-decoration:underline;"><a class="suggestlinks" id="lgpd" style="color:white" href="#" onclick="ldpd()">LGPD</a></div></li><li><div style="color:white;text-decoration:underline;"><a class="suggestlinks" id="pipeda" style="color:white" href="#" onclick="pipeda()">PIPEDA</a></div></li><li><div style="color:white;text-decoration:underline;"><a class="suggestlinks" id="aus" style="color:white" href="#" onclick="aus()">Australian Privacy Act</a></div></li></ul></div>'
+        }
+        else{
+        finalbotreply = linkify(botreply);
+        links='';
+      }
+        var format1 = '<div style="float:left;width:50%;margin-right:20px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+        divchat.innerHTML+=format1+finalbotreply+links+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
 
         var objDiv = document.getElementById("chatspace");
         objDiv.scrollTop = objDiv.scrollHeight;
@@ -246,6 +365,102 @@ var form = document.getElementById("messageform");
 
         }
       })
+
+      function linkify(text) {
+        var urlRegex =/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        return text.replace(urlRegex, function(url) {
+          return '<a style="color:white;text-decoration: underline;" target="_blank" href="' + url + '">' + url + '</a>';
+     });
+    }
+
+    function showlink(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li>You can access the PwC Privacy Policy for the US (United States) at https://www.pwc.com/us/en/site/privacy.html.</li></br><li>You can access the PwC Privacy Policy for the UK (United Kingdom) at https://www.pwc.com/gx/en/legal-notices/pwc-privacy-statement.html.</li></br></li>You can access the PwC Privacy Policy for the Carribean at https://www.pwc.com/cb/en/privacy-statement.html.</li></br><li>You can access the PwC Privacy Policy for the Australia at https://www.pwc.com.au/contact-us/privacy-policy.html.</li></br><li>You can access the PwC Privacy Policy for the Russia at https://www.pwc.ru/en/about/personal-data.html.</li></br><li>You can access the PwC Privacy Policy for the China at https://www.pwccn.com/en/privacy.html.</li></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
+
+    function gdpr(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li> You can find information about the General Data Protection Regulation (GDPR), including the different domains, corporate readiness guides, and surveys at https://consultingsource.pwcinternal.com/Collections/TopicCollections/GDPR.</li></br><li>You can access the PwC GDPR Toolkit at https://consultingsource.pwcinternal.com/Toolkit/GDPR.</li></br></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
+
+    function ldpd(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li>The translated English text for the Lei Geral de Proteção de Dados (LGPD) has been completed by IAPP professionals and is accessible at https://iapp.org/media/pdf/resource_center/Brazilian_General_Data_Protection_Law.pdf. This translation is gold-standard in the PwC Consulting Source tool.</li></br></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
+
+    function pipeda(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li>More information about the The Personal Information Protection and Electronic Documents Act (PIPEDA) can be accessed at https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/.</li></br></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
+    function aus(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li>More information about the Australian Privacy Act can be accessed at https://www.oaic.gov.au/assets/privacy/app-guidelines/app-guidelines-july-2019.pdf.</li></br></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
+
+    function ccpa(){
+      var divchat = document.getElementById("chatspace");
+      var rdate = new Date();
+      var botdatestring = rdate.toUTCString();
+      var format1 = '<div style="float:left;width:50%;margin-right:0px;margin-top:20px">'+"<div style='float:left;margin-top:5px;margin-right:28px;padding-top:10px;padding-left:10px;width:10%;'><i class='fa fa-user' style='font-size:40px;color:#e0301e' aria-hidden='true'></i></div><div style='background:#e0301e;color:white;float:right;margin-top:10px;padding:15px;width:80%;height:auto;border-radius:10px;overflow-wrap: break-word; font-family: Times New Roman, Georgia, serif;'>";
+      var policy = '<p><ul><li>You can find information about the California Consumer Privacy Act (CCPA), including the privacy program benchmarks, DSR standards, and implementation support at https://consultingsource.pwcinternal.com/Collections/TopicCollections/CaliforniaConsumerPrivacyAct</li></br></ul></p>'
+      divchat.innerHTML+=format1+linkify(policy)+'</div></div>'+'<div style="float:left;clear:both;width:50%;margin-right:20px;"><div style="float:right;text-align:left;padding-left:10px;width:80%;color:black;height:auto;font-size:10px;font-family: Times New Roman, Georgia, serif;">'+'Received : '+botdatestring+'</div></div>';
+      var objDiv = document.getElementById("chatspace");
+      objDiv.scrollTop = objDiv.scrollHeight;
+
+      document.getElementById("usermessage").value='';
+
+
+    }
 
 
 </script>
